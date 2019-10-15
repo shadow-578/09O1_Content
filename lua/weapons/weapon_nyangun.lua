@@ -3,7 +3,7 @@ AddCSLuaFile()
 AddCSLuaFile( "effects/rb655_nyan_tracer.lua" )
 AddCSLuaFile( "effects/rb655_nyan_bounce.lua" )
 
-if ( SERVER ) then resource.AddWorkshop( "123277559" ) end
+--if ( SERVER ) then resource.AddWorkshop( "123277559" ) end
 
 SWEP.Slot = 2
 SWEP.SlotPos = 5

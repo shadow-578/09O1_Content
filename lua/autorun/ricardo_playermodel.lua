@@ -6,8 +6,8 @@ CreateConVar("pm_ricardo_exclusive", 1, {FCVAR_NOTIFY, FCVAR_ARCHIVE, FCVAR_REPL
 CreateConVar("pm_ricardo_killswitch", 0, {FCVAR_NOTIFY, FCVAR_ARCHIVE, FCVAR_REPLICATED})
 local ricardoSoundFX = Sound("ugotthat_loop_edit.mp3")
 local ricardoModelLoc = "models/player/ricardo.mdl"
-print("Ricardo PM INIT abcd")
-
+local creatorNick = "nope"
+print("Ricardo PM INIT abcdef")
 
 --original PlayerModel code START
 list.Set( "PlayerOptionsModel",  "RICARDO", ricardoModelLoc)
@@ -28,11 +28,16 @@ if CLIENT then
 	hook.Add("Think", "RicardoClientKeyCheckHook", function()
 		if not IsValid(LocalPlayer()) then return end
 
-		if not (LocalPlayer():GetModel() == ricardoModelLoc) and GetConVar("pm_ricardo_exclusive"):GetBool() then
-			return end
-		
+		--allow creator exclusive right to use function on EVERY playermodel
+		--if not (LocalPlayer():GetModel() == ricardoModelLoc) and GetConVar("pm_ricardo_exclusive"):GetBool() then
+		--	return end
+		if not (LocalPlayer():GetModel() == ricardoModelLoc) then
+			if (not (LocalPlayer():GetName() == creatorNick) and GetConVar("pm_ricardo_exclusive"):GetBool()) or not LocalPlayer():Alive() then
+				return end
+		end
+			
 
-		local keyState = input.IsKeyDown(KEY_B)
+		local keyState = input.IsKeyDown(KEY_G)
 
 		if keyState then		
 			if not keyTapFlag then
@@ -51,7 +56,7 @@ if CLIENT then
 
 		if LocalPlayer():GetModel() == ricardoModelLoc and not notifyOnlyOnceFlag then
 			notifyOnlyOnceFlag = true
-			LocalPlayer():ChatPrint("Have fun with Ricardo by tapping B :P")
+			LocalPlayer():ChatPrint("Have fun with Ricardo by tapping G :P")
 		end	
 	end)
 end
@@ -66,9 +71,13 @@ if SERVER then
 		if not IsValid(ply) then return end
 		
 		--check player model here
-		if not (ply:GetModel() == ricardoModelLoc) and GetConVar("pm_ricardo_exclusive"):GetBool() then
-			return end
+		--if not (ply:GetModel() == ricardoModelLoc) and GetConVar("pm_ricardo_exclusive"):GetBool() then
+		--	return end
 		--end
+		if not (ply:GetModel() == ricardoModelLoc) then
+			if (not (ply:GetName() == creatorNick) and GetConVar("pm_ricardo_exclusive"):GetBool()) or not ply:Alive() then
+				return end
+		end
 		
 		local newKeyState = net.ReadBool()
 		dbprint("[Ricardo]Received KeyStateChange NetMSG from "..ply:GetName()..". New state is "..tostring(newKeyState)..".")
@@ -86,7 +95,12 @@ if SERVER then
 
 				--ensure that the player dances the WHOLE time (PERFECTLY timed here, WHY am i doing this?!)
 				timer.Create(ply:EntIndex().."ricardo_dance_timer", 1, 7.125, function()
-					if readySounds[ply:SteamID()]:IsPlaying() then
+					if not ply:Alive() then
+						--stop sound if player dies
+						readySounds[ply:SteamID()]:Stop()
+					end
+					
+					if readySounds[ply:SteamID()]:IsPlaying() and ply:Alive() then
 						ply:DoAnimationEvent( ACT_GMOD_TAUNT_DANCE, 1642)
 					end
 				end)

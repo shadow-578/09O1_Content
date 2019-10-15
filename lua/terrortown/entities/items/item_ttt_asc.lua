@@ -1,7 +1,7 @@
 if SERVER then
   AddCSLuaFile()
   resource.AddFile("vgui/ttt/icon_asc.vmt")
-  resource.AddWorkshop("672173225")
+  --resource.AddWorkshop("672173225")
   util.AddNetworkString("ASCBuyed")
   util.AddNetworkString("ASCKill")
   util.AddNetworkString("ASCError")

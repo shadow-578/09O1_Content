@@ -8,5 +8,5 @@ end
 AddPlayerModel( "mardoka", "models/sinful/mardoka.mdl", "models/weapons/c_arms_mardoka.mdl" )
 
 if SERVER then
-	resource.AddWorkshop( "319601966" )
+	--resource.AddWorkshop( "319601966" )
 end

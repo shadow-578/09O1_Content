@@ -1,7 +1,7 @@
 if SERVER then
 
 	AddCSLuaFile( "shared.lua" )
-	resource.AddWorkshop("639521512")
+	--resource.AddWorkshop("639521512")
 end
 
 if CLIENT then

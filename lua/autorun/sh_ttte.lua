@@ -9,7 +9,7 @@ end )
 ]]
 
 if SERVER then
-  resource.AddWorkshop( "811718553" )
+  --resource.AddWorkshop( "811718553" )
 end
 
 sound.Add( {

@@ -1,7 +1,7 @@
 AddCSLuaFile()
 
 if SERVER then
-resource.AddWorkshop( "925075129" )
+--resource.AddWorkshop( "925075129" )
 end
 
 SWEP.HoldType = "normal"

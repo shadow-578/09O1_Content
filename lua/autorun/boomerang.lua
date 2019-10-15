@@ -1,5 +1,5 @@
 if SERVER then
-	resource.AddWorkshop("639521512")
+	--resource.AddWorkshop("639521512")
 	resource.AddFile("materials/models/ratchet_mario/mario_party_9/hammer_bro/boomerang_full.vmt")
 	resource.AddFile("materials/models/ratchet_mario/mario_party_9/hammer_bro/boomerang_full.vtf")
 	resource.AddFile("materials/models/ratchet_mario/mario_party_9/hammer_bro/normal.vtf")

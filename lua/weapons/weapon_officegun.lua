@@ -7,6 +7,8 @@ CreateConVar("ttt_officegun_minmass", 45, {FCVAR_NOTIFY, FCVAR_ARCHIVE, FCVAR_RE
 CreateConVar("ttt_officegun_maxmass", 75, {FCVAR_NOTIFY, FCVAR_ARCHIVE, FCVAR_REPLICATED}, "the maximum mass objects shot by the gun have (more mass = more damage)")
 CreateConVar("ttt_officegun_massshotcount", 4, {FCVAR_NOTIFY, FCVAR_ARCHIVE, FCVAR_REPLICATED}, "How many objects are shot on the Office guns secondary attack mode (Shotgun mode)")
 CreateConVar("ttt_officegun_stealth", 1, {FCVAR_NOTIFY, FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Should the weapon look like a default shotgun or the default traitor weapon deagle")
+CreateConVar("ttt_officegun_prim_cooldown", 2, {FCVAR_NOTIFY, FCVAR_ARCHIVE, FCVAR_REPLICATED}, "The Cooldown of the officeguns primary attack (single shot mode) (in seconds)")
+CreateConVar("ttt_officegun_sec_cooldown", 10, {FCVAR_NOTIFY, FCVAR_ARCHIVE, FCVAR_REPLICATED}, "The Cooldown of the officeguns secondary attack (Shotgun mode) (in seconds)")
 
 local ShootSound = Sound("Metal.SawbladeStick")
 local ModelsPathBase = "models/props/cs_office/"
@@ -69,8 +71,8 @@ SWEP.DrawCrosshair = true
 SWEP.Primary.ClipSize = GetConVar("ttt_officegun_ammo"):GetInt()
 SWEP.Primary.DefaultClip = GetConVar("ttt_officegun_ammo"):GetInt()
 SWEP.Primary.Ammo = "none"
-SWEP.Primary.Delay = 0.8
-SWEP.Secondary.Delay = 1.6
+SWEP.Primary.Delay = GetConVar("ttt_officegun_prim_cooldown"):GetFloat();
+SWEP.Secondary.Delay = GetConVar("ttt_officegun_sec_cooldown"):GetFloat();
 
 --single buy only
 SWEP.LimitedStock = true
