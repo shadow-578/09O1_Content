@@ -1,5 +1,5 @@
 --09-O1 Content Pack version reporting Client script
-local VER = "2.2"
+local VER = "2.3"
 
 --debug print local version
 MsgC(Color(210, 210, 20), "[Client]09-O1 Content Pack Version "..VER.."\n" )

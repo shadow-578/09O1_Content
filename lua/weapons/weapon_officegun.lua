@@ -1,11 +1,11 @@
 CreateConVar("ttt_officegun_detective", 0, {FCVAR_NOTIFY, FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Can a detective buy the Office gun?")
 CreateConVar("ttt_officegun_traitor", 1, {FCVAR_NOTIFY, FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Can a traittor buy the Office gun?")
-CreateConVar("ttt_officegun_ammo", 15, {FCVAR_NOTIFY, FCVAR_ARCHIVE, FCVAR_REPLICATED}, "How much ammo the chair gun has.")
+CreateConVar("ttt_officegun_ammo", 10, {FCVAR_NOTIFY, FCVAR_ARCHIVE, FCVAR_REPLICATED}, "How much ammo the chair gun has.")
 CreateConVar("ttt_officegun_minvelocity", 100000, {FCVAR_NOTIFY, FCVAR_ARCHIVE, FCVAR_REPLICATED}, "The minimum velocity objects shot by the gun have (more velocity = more speed AND more damage)")
 CreateConVar("ttt_officegun_maxvelocity", 900000, {FCVAR_NOTIFY, FCVAR_ARCHIVE, FCVAR_REPLICATED}, "The maximum velocity objects shot by the gun have (more velocity = more speed AND more damage)")
-CreateConVar("ttt_officegun_minmass", 75, {FCVAR_NOTIFY, FCVAR_ARCHIVE, FCVAR_REPLICATED}, "the minimum mass objects shot by the gun have (more mass = more damage)")
-CreateConVar("ttt_officegun_maxmass", 150, {FCVAR_NOTIFY, FCVAR_ARCHIVE, FCVAR_REPLICATED}, "the maximum mass objects shot by the gun have (more mass = more damage)")
-CreateConVar("ttt_officegun_massshotcount", 3, {FCVAR_NOTIFY, FCVAR_ARCHIVE, FCVAR_REPLICATED}, "How many objects are shot on the Office guns secondary attack mode (Shotgun mode)")
+CreateConVar("ttt_officegun_minmass", 45, {FCVAR_NOTIFY, FCVAR_ARCHIVE, FCVAR_REPLICATED}, "the minimum mass objects shot by the gun have (more mass = more damage)")
+CreateConVar("ttt_officegun_maxmass", 75, {FCVAR_NOTIFY, FCVAR_ARCHIVE, FCVAR_REPLICATED}, "the maximum mass objects shot by the gun have (more mass = more damage)")
+CreateConVar("ttt_officegun_massshotcount", 4, {FCVAR_NOTIFY, FCVAR_ARCHIVE, FCVAR_REPLICATED}, "How many objects are shot on the Office guns secondary attack mode (Shotgun mode)")
 CreateConVar("ttt_officegun_stealth", 1, {FCVAR_NOTIFY, FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Should the weapon look like a default shotgun or the default traitor weapon deagle")
 
 local ShootSound = Sound("Metal.SawbladeStick")
@@ -18,15 +18,11 @@ local ModelsNames = {"water_bottle", "tv_plasma",
 
 SWEP.Base = "weapon_tttbase"
 SWEP.PrintName = "Office Gun"
-SWEP.Slot = 2
+SWEP.Slot = 6
 SWEP.SlotPos = 5
 SWEP.DrawWeaponInfoBox = false
 SWEP.Instructions = "Left mouseclick to fire a office item!\nRight mouseclick to fire multiple!"
 
---set slot to 6 in ttt
-if ( GAMEMODE.Name == "Trouble in Terrorist Town" ) then
-	SWEP.Slot = 6
-end
 
 SWEP.EquipMenuData = {
 	type = "item_weapon",
@@ -113,9 +109,7 @@ function SWEP:PrimaryAttack()
 	
 		self:ThrowObject(self:GetRandomOfficeModel(), false)
 
-		if ( GAMEMODE.Name == "Trouble in Terrorist Town" ) then
-			self:TakePrimaryAmmo(1)
-		end
+		self:TakePrimaryAmmo(1)
 		
 		self:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
 	end
@@ -143,9 +137,7 @@ function SWEP:SecondaryAttack()
 				self:ThrowObject(self:GetRandomOfficeModel(), true)
 				
 				--remove ammo
-				if ( GAMEMODE.Name == "Trouble in Terrorist Town" ) then
-					self:TakePrimaryAmmo(1)
-				end
+				self:TakePrimaryAmmo(1)
 			end
 		end)
 	end
@@ -195,6 +187,24 @@ function SWEP:ThrowObject(model_file, displaceRandom)
 	--phys:ApplyForceCenter( velocity )
 	phys:SetVelocityInstantaneous(velocity)
 	phys:SetMass(math.Rand(GetConVar("ttt_officegun_minmass"):GetFloat(), GetConVar("ttt_officegun_maxmass"):GetFloat()))
+	
+	ent:AddCallback("PhysicsCollide", function(ent, col)
+		if not IsValid(ent) then
+			ent:Remove()
+		end
+		
+		local phys = ent:GetPhysicsObject()
+		
+		if not IsValid(phys) then
+			ent:Remove()
+		end
+		
+		--check velocity (10^2 = 100)
+		if(phys:GetVelocity():LengthSqr() <= 100) then
+			--remove extra mass
+			phys:SetMass(1)
+		end
+	end)
 	
 	cleanup.Add( self.Owner, "props", ent )
 	undo.Create("Thrown_Chair")
