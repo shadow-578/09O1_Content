@@ -11,7 +11,7 @@ convars["sv_playermodel_selector_gamemodes"]	= 1
 convars["sv_playermodel_selector_instantly"]	= 1
 convars["sv_playermodel_selector_flexes"]		= 0
 convars["sv_playermodel_selector_limit"]		= 1
-convars["sv_playermodel_selector_debug"]		= 0
+convars["sv_playermodel_selector_debug"]		= 1
 for cvar, def in pairs( convars ) do
 	CreateConVar( cvar,	def, flag )
 end
@@ -279,16 +279,21 @@ hook.Add( "PlayerSpawn", "lf_playermodel_force_hook1", function( ply )
 end )
 
 local function ForceSetModel( ply, mdl )
-	if GetConVar( "sv_playermodel_selector_force" ):GetBool() and Allowed( ply ) and tobool( ply:GetInfoNum( "cl_playermodel_selector_force", 0 ) ) then
-		if !ply.lf_playermodel_spawned then
-			if debugmode then print( "LF_PMS: Detected initial call for SetModel on: "..tostring( ply:GetName() ) ) end
-			UpdatePlayerModel( ply )
+	if not (mdl == nil) then
+		if GetConVar( "sv_playermodel_selector_force" ):GetBool() and Allowed( ply ) and tobool( ply:GetInfoNum( "cl_playermodel_selector_force", 0 ) ) and not ply.pigeon then
+			if !ply.lf_playermodel_spawned then
+				if debugmode then print( "LF_PMS: Detected initial call for SetModel on: "..tostring( ply:GetName() ) ) end
+				UpdatePlayerModel( ply )
+			else
+				if debugmode then print( "LF_PMS: Enforcer prevented "..tostring( ply:GetName() ).."'s model from being changed to: "..tostring( mdl ) ) end
+			end
 		else
-			if debugmode then print( "LF_PMS: Enforcer prevented "..tostring( ply:GetName() ).."'s model from being changed to: "..tostring( mdl ) ) end
+			if debugmode then print( "LF_PMS: Enforcer allowed "..tostring( ply:GetName() ).."'s model being changed to: "..tostring( mdl ) ) end
+			SetMDL( ply, mdl )
+			if addon_legs then hook.Run( "SetModel" , ply, mdl ) end
 		end
 	else
-		SetMDL( ply, mdl )
-		if addon_legs then hook.Run( "SetModel" , ply, mdl ) end
+		if debugmode then print("LF_PMS: Attempted call SetMDL with nil model for "..tostring( ply:GetName() )) end
 	end
 end
 

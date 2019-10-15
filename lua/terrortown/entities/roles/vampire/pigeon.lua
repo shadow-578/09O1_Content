@@ -44,7 +44,8 @@ function PIGEON.Enable(ply)
 	ply.pigeon.model = ply:GetModel()
 
 	ply:SetModel(PIGEON.model)
-
+	ply:SetModelScale(1,0)
+	
 	ply.pigeon.ghost = PIGEON.Ghost(ply)
 
 	ply:SetNWEntity("pigeon.ghost", ply.pigeon.ghost)
@@ -80,8 +81,9 @@ function PIGEON.Disable(ply)
 
 	ply:SetNWEntity("pigeon.ghost", nil)
 	ply:SetModel(ply.pigeon.model)
+	ply:SetModelScale(1,0)
 	ply:SetMoveType(MOVETYPE_WALK)
-
+	
 	ply.pigeon = nil
 end
 

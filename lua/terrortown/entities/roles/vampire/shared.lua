@@ -1,3 +1,6 @@
+--this was a mistake
+CreateConVar("ttt2_vamp_disable_weapons_as_pigeon", 1, {FCVAR_NOTIFY, FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Are Vampires allowed to use weapons when transformed to a pigeon?")
+
 if SERVER then
 	AddCSLuaFile()
 	AddCSLuaFile("pigeon.lua")
@@ -7,7 +10,7 @@ if SERVER then
 	util.AddNetworkString("TTT2VampPigeon")
 	util.AddNetworkString("TTT2RequestVampTransformation")
 
-	CreateConVar("ttt2_vamp_bloodtime", "60", {FCVAR_ARCHIVE, FCVAR_NOTIFY})
+	CreateConVar("ttt2_vamp_bloodtime", "60", {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Vampire bloodlust time")
 else
 	CreateClientConVar("ttt2_vamp_hud_x", "0.8", true, false, "The relative x-coordinate (position) of the HUD. (0-100) Def: 0.8")
 	CreateClientConVar("ttt2_vamp_hud_y", "83.3", true, false, "The relative y-coordinate (position) of the HUD. (0-100) Def: 83.3")
@@ -19,18 +22,53 @@ ROLE.color = Color(149, 43, 37, 255) -- ...
 ROLE.dkcolor = Color(67, 3, 0, 255) -- ...
 ROLE.bgcolor = Color(29, 116, 40, 255) -- ...
 ROLE.abbr = "vamp" -- abbreviation
-ROLE.defaultEquipment = SPECIAL_EQUIPMENT -- here you can set up your own default equipment
+ROLE.defaultTeam = TEAM_TRAITOR -- the team name: roles with same team name are working together
+ROLE.defaultEquipment = TRAITOR_EQUIPMENT -- access traitor shop
 ROLE.surviveBonus = 0.5 -- bonus multiplier for every survive while another player was killed
 ROLE.scoreKillsMultiplier = 5 -- multiplier for kill of player of another team
 ROLE.scoreTeamKillsMultiplier = -16 -- multiplier for teamkill
+ROLE.unknownTeam = true -- do players see their teammates highlighted?
+ROLE.visibleForTraitors = false --Can traitors see whos vampire?
+ROLE.fallbackTable = {}
 
 ROLE.conVarData = {
 	pct = 0.1, -- necessary: percentage of getting this role selected (per player)
 	maximum = 1, -- maximum amount of roles in a round
 	minPlayers = 10, -- minimum amount of players until this role is able to get selected
 	togglable = true, -- option to toggle a role for a client if possible (F1 menu)
-	credits = 2
+	credits = 2,
+	shopFallback = SHOP_FALLBACK_TRAITOR
 }
+
+--   _____           _                    ______        _    
+--  /  __ \         | |                   |  ___|      | |   
+--  | /  \/_   _ ___| |_ ___  _ __ ___    | |_ ___  ___| | __
+--  | |   | | | / __| __/ _ \| '_ ` _ \   |  _/ _ \/ __| |/ /
+--  | \__/\ |_| \__ \ || (_) | | | | | |  | ||  __/ (__|   < 
+--   \____/\__,_|___/\__\___/|_| |_| |_|  \_| \___|\___|_|\_\
+--                                                           
+hook.Add( "SetupMove", "vampire_enforce_ducking_idk_what_i_am_doing_with_my_life", function( ply, mvd, cmd )
+	if (not ply:Crouching() and ply.pigeon) then
+		--print("NOT DUCKING! I CANNOT TOLERATE THIS!!!")
+		--ply:ConCommand("+duck\n")
+	end
+end )
+
+hook.Add( "PlayerSwitchWeapon", "vampire_weapon_switch_disable_view_model_to_prevent_fuckery_that_looks_bad", function( ply, oldWeapon, newWeapon )
+	if ply.pigeon then
+		print("Hiding player view model...")
+		ply:DrawViewModel(false)
+		ply:DrawWorldModel(false)
+	end
+end )
+
+--   _____ _   _______ 
+--  |  ___| \ | |  _  \
+--  | |__ |  \| | | | |
+--  |  __|| . ` | | | |
+--  | |___| |\  | |/ / 
+--  \____/\_| \_/___/  
+--                           
 
 -- now link this subrole with its baserole
 hook.Add("TTT2BaseRoleInit", "TTT2ConBRTWithVamp", function()
@@ -53,7 +91,7 @@ hook.Add("TTT2FinishedLoading", "VampInitT", function()
 		-- setup here is not necessary but if you want to access the role data, you need to start here
 		-- setup basic translation !
 		LANG.AddToLanguage("English", VAMPIRE.name, "Vampire")
-		LANG.AddToLanguage("English", "info_popup_" .. VAMPIRE.name, [[You are a Vampire!
+		LANG.AddToLanguage("English", "info_popup_vampire_alone", [[You are a Vampire!
 It's time for some blood!
 Otherwise, you will die...]])
 		LANG.AddToLanguage("English", "body_found_" .. VAMPIRE.abbr, "This was a Vampire...")
@@ -67,7 +105,7 @@ In Bloodlust, the vampire heals 50% of the damage he did to other players. In ad
 
 		-- maybe this language as well...
 		LANG.AddToLanguage("Deutsch", VAMPIRE.name, "Vampir")
-		LANG.AddToLanguage("Deutsch", "info_popup_" .. VAMPIRE.name, [[Du bist ein Vampir!
+		LANG.AddToLanguage("Deutsch", "info_popup_vampire_alone", [[Du bist ein Vampir!
 Es ist Zeit für etwas Blut!
 Ansonsten wirst du sterben...]])
 		LANG.AddToLanguage("Deutsch", "body_found_" .. VAMPIRE.abbr, "Er war ein Vampir...")
@@ -84,13 +122,23 @@ if SERVER then
 
 	function TransformToVamp(ply)
 		if not ply:GetNWBool("transformedVamp", false) then -- transform
-			savedWeapons[ply:SteamID64()] = {}
-
-			for _, wep in pairs(ply:GetWeapons()) do
-				savedWeapons[ply:SteamID64()][#savedWeapons[ply:SteamID64()] + 1] = {cls = wep:GetClass(), clip1 = wep:Clip1(), clip2 = wep:Clip2()}
+		
+			if GetConVar("ttt2_vamp_disable_weapons_as_pigeon"):GetBool() then
+				if ply:SteamID64() == nil then
+					print("Player " .. ply:GetName() .. " does not have a SteamID64! trying fallback...")
+					savedWeapons[ply:SteamID()] = {}
+					for _, wep in pairs(ply:GetWeapons()) do
+						savedWeapons[ply:SteamID()][#savedWeapons[ply:SteamID()] + 1] = {cls = wep:GetClass(), clip1 = wep:Clip1(), clip2 = wep:Clip2()}
+					end
+					ply:StripWeapons()
+				else
+					savedWeapons[ply:SteamID64()] = {}
+					for _, wep in pairs(ply:GetWeapons()) do
+						savedWeapons[ply:SteamID64()][#savedWeapons[ply:SteamID64()] + 1] = {cls = wep:GetClass(), clip1 = wep:Clip1(), clip2 = wep:Clip2()}
+					end
+					ply:StripWeapons()
+				end
 			end
-
-			ply:StripWeapons()
 
 			ply:ChatPrint("Transformed to PIGEON!")
 
@@ -112,15 +160,28 @@ if SERVER then
 
 			ply:SetNWBool("transformedVamp", false)
 
-			if savedWeapons[ply:SteamID64()] then
-				for _, wep in pairs(savedWeapons[ply:SteamID64()]) do
-					local w = ply:Give(wep.cls)
-					w:SetClip1(wep.clip1)
-					w:SetClip2(wep.clip2)
+			if GetConVar("ttt2_vamp_disable_weapons_as_pigeon"):GetBool() then
+				if ply:SteamID64() == nil then
+					print("Player " .. ply:GetName() .. " does not have a SteamID64! trying fallback...")
+					if savedWeapons[ply:SteamID()] then
+						for _, wep in pairs(savedWeapons[ply:SteamID()]) do
+							local w = ply:Give(wep.cls)
+							w:SetClip1(wep.clip1)
+							w:SetClip2(wep.clip2)
+						end
+						savedWeapons[ply:SteamID()] = {}
+					end
+				else
+					if savedWeapons[ply:SteamID64()] then
+						for _, wep in pairs(savedWeapons[ply:SteamID64()]) do
+							local w = ply:Give(wep.cls)
+							w:SetClip1(wep.clip1)
+							w:SetClip2(wep.clip2)
+						end
+						savedWeapons[ply:SteamID64()] = {}
+					end
 				end
 			end
-
-			savedWeapons[ply:SteamID64()] = {}
 		end
 	end
 
