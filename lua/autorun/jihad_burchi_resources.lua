@@ -2,7 +2,7 @@
 resource.AddFile( "materials/vgui/ttt/burchi.vmt" );
 
 --sounds
-resource.AddFile( "sound/weapons/burchijihad/burchi_df.wav" );
+resource.AddFile( "sound/weapons/burchijihad/burchi.wav" );
 resource.AddFile( "sound/weapons/burchijihad/big_explosion.wav" );
 
 --model

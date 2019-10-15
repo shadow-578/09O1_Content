@@ -32,7 +32,7 @@ function ENT:Think()
   local pos = self:GetPos()
   local ang = self:GetAngles()
   ang:RotateAroundAxis(ang:Up(), 90)
-  local forward = ang:Forward() * 400 * deltaTime
+  local forward = ang:Forward() * 600 * deltaTime
 
   self.startPos = self.startPos or pos
   local dist = self.startPos:Distance( pos )

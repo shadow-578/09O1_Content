@@ -119,7 +119,7 @@ function SWEP:PrimaryAttack(worldsnd)
 			local attacker = self.Owner
 			if ply:IsNPC() then timer.Simple(20,function() if IsValid(ply) then ply:Remove() end end)
 			else
-				timer.Simple(20,function() DoPoison(attacker,ply) end)
+				timer.Simple(10,function() DoPoison(attacker,ply) end)
 				timer.Create(self:EntIndex().."Poison",0.5,19,function()
 					if IsValid(ply) and ply.infected and ply:Alive() then
 						ply:ConCommand("+attack")

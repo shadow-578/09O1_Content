@@ -15,7 +15,7 @@ SWEP.Base = "weapon_tttbase"
 SWEP.HoldType = "slam"
 
 SWEP.Primary.Ammo = "none"
-SWEP.Primary.Delay = 5
+SWEP.Primary.Delay = 2
 SWEP.Primary.ClipSize = -1
 SWEP.Primary.DefaultClip = -1
 SWEP.Primary.Automatic = false
@@ -61,7 +61,7 @@ SWEP.NoSights = true
 if CLIENT then
    SWEP.EquipMenuData = {
       type = "item_weapon",
-	  desc = "Opfere dich für den geheiligten VoKiller."
+	  desc = "Waffen gegen die moderne Welt\n\nTötet dich und alle Spieler in deiner Nähe."
    };
 end
 
@@ -72,7 +72,7 @@ end
 
 -- Precache sounds
 function SWEP:Initialize()
-   util.PrecacheSound( "weapons/burchijihad/burchi_df.wav" )
+   util.PrecacheSound( "weapons/burchijihad/burchi.wav" )
    util.PrecacheSound( "weapons/burchijihad/big_explosion.wav" )
 end
 
@@ -92,7 +92,7 @@ function SWEP:PrimaryAttack()
    -- The rest is only done on the server
    if (SERVER) then
       timer.Simple(2, function() self:Asplode() end )
-      self.Owner:EmitSound( "weapons/burchijihad/burchi_df.wav" )
+      self.Owner:EmitSound( "weapons/burchijihad/burchi.wav" )
    end
 end
 
@@ -103,7 +103,7 @@ function SWEP:Asplode()
    local ent = ents.Create( "env_explosion" )
    ent:SetPos( self.Owner:GetPos() )
    ent:SetOwner( self.Owner )
-   ent:SetKeyValue( "iMagnitude", "250" )
+   ent:SetKeyValue( "iMagnitude", "350" )
    ent:Spawn()
    ent:Fire( "Explode", 0, 0 )
    ent:EmitSound( "weapons/burchijihad/big_explosion.wav", 500, 500 )

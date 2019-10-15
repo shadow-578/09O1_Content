@@ -13,11 +13,11 @@ local EXPLODE_RADIUS2 = 360
 local JUMP_VERT_SPEED = 220 
 local JUMP_HORIZ_SPEED = 400 
 local WADDLE_SPEED = 300 
-local TARGET_RADIUS = 600 
-local ATTACK_DIST = 150 
+local TARGET_RADIUS = 800 
+local ATTACK_DIST = 250 
 local ANGER_STARTATTACK = 15
 local ANGER_MAX = 255 
-local ANGER_RATE = 1 
+local ANGER_RATE = 5 
 
 local sndTabAttack = 
 {
