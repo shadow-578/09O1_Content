@@ -1,0 +1,7 @@
+#ignore all except lua folder
+gamemodes/
+maps/
+materials/
+models/
+particles/
+sound/
