@@ -23,15 +23,15 @@ SWEP.DrawAmmo = false
 SWEP.HoldType = "smg"
 
 SWEP.Primary.ClipSize = 1
-SWEP.Primary.Delay = 0.1
-SWEP.Primary.Damage = 16
+SWEP.Primary.Delay = 0.01
+SWEP.Primary.Damage = 2
 SWEP.Primary.DefaultClip = 1
 SWEP.Primary.Automatic = true
 SWEP.Primary.Ammo = "rb655_nyan"
 
 SWEP.Secondary.ClipSize = 1
 SWEP.Secondary.Delay = 0.5
-SWEP.Secondary.Damage = 8
+SWEP.Secondary.Damage = 30
 SWEP.Secondary.DefaultClip = 1
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "rb655_nyan"

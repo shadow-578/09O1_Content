@@ -1,0 +1,2 @@
+player_manager.AddValidModel( "Wario from Mario Tennis Ultra Smash", "models/supermario11000/warioandwaluigi/wario_pm.mdl" )
+player_manager.AddValidHands( "Wario from Mario Tennis Ultra Smash", "models/supermario11000/weapons/c_arms_wario.mdl", 0, "00000000" )
