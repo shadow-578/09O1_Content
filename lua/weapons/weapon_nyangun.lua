@@ -81,12 +81,12 @@ function SWEP:PrimaryAttack()
 	if ( !self:CanPrimaryAttack() ) then return end
 
 	if ( self.Owner:IsNPC() ) then
-		self:EmitSound( "weapons/nyan/nya" .. math.random( 1, 2 ) .. ".wav", 100, math.random( 60, 80 ) )
+		self:EmitSound( "weapons/nyan/nya1.wav", 100, math.random( 60, 80 ) )
 	else
 		if ( self.LoopSound ) then
 			self.LoopSound:ChangeVolume( 1, 0.1 )
 		else
-			self.LoopSound = CreateSound( self.Owner, Sound( "weapons/nyan/nyan_loop.wav" ) )
+			--self.LoopSound = CreateSound( self.Owner, Sound( "weapons/nyan/nya1.wav" ) )
 			if ( self.LoopSound ) then self.LoopSound:Play() end
 		end
 		if ( self.BeatSound ) then self.BeatSound:ChangeVolume( 0, 0.1 ) end
@@ -130,7 +130,7 @@ function SWEP:SecondaryAttack()
 	if ( !self:CanSecondaryAttack() ) then return end
 	
 	if ( IsFirstTimePredicted() ) then
-		self:EmitSound( "weapons/nyan/nya" .. math.random( 1, 2 ) .. ".wav", 100, math.random( 85, 100 ) )
+		self:EmitSound( "weapons/nyan/nya1.wav", 100, math.random( 85, 100 ) )
 
 		local bullet = {}
 		bullet.Num = 6
@@ -177,7 +177,7 @@ function SWEP:Reload()
 	self:SendWeaponAnim( ACT_VM_SECONDARYATTACK )
 	self.Owner:SetAnimation( PLAYER_ATTACK1 )
 
-	self:EmitSound( "weapons/nyan/nya" .. math.random( 1, 2 ) .. ".wav", 100, math.random( 60, 80 ) )
+	self:EmitSound( "weapons/nyan/nya1.wav", 100, math.random( 60, 80 ) )
 
 	self:SetNextPrimaryFire( CurTime() + 1 )
 	self:SetNextSecondaryFire( CurTime() + 1 )

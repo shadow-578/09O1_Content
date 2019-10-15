@@ -6,7 +6,8 @@ util.AddNetworkString("SprintGetConVars")
 local Multiplikator = CreateConVar("ttt_sprint_bonus_rel", "0.5", FCVAR_SERVER_CAN_EXECUTE, "The relative speed bonus given while sprinting. (0.1-2) Def: 0.5")
 local Crosshair = CreateConVar("ttt_sprint_no_crosshair", "1", FCVAR_SERVER_CAN_EXECUTE, "Makes the crosshair disappear while sprinting. Def: 1")
 local Regenerate = CreateConVar("ttt_sprint_regenerate", "0.15", FCVAR_SERVER_CAN_EXECUTE, "Sets stamina regeneration speed. (0.01-2) Def: 0.15")
-local Consumption = CreateConVar("ttt_sprint_consume", "0.3", FCVAR_SERVER_CAN_EXECUTE, "Sets stamina consumption speed. (0.1-5) Def: 0.3")
+local Consumption = CreateConVar("ttt_sprint_consume", "0.15", FCVAR_SERVER_CAN_EXECUTE, "Sets stamina consumption speed. (0.1-5) Def: 0.3")
+
 -- Set the Speed
 net.Receive("SprintSpeedset", function(len, ply)
 	local mul = net.ReadFloat()
@@ -17,6 +18,7 @@ net.Receive("SprintSpeedset", function(len, ply)
 		ply.mult = nil
 	end
 end)
+
 -- Send Convats if requested
 net.Receive("SprintGetConVars", function(len, ply)
 	local Table = {
@@ -29,10 +31,12 @@ net.Receive("SprintGetConVars", function(len, ply)
 	net.WriteTable(Table)
 	net.Send(ply)
 end)
+
 -- return Speed for old TTT Servers
 hook.Add("TTTPlayerSpeed", "TTTSprint4TTTPlayerSpeed", function(ply)
 	return ply.mult
 end)
+
 -- return Speed
 hook.Add("TTTPlayerSpeedModifier", "TTTSprint4TTTPlayerSpeed", function(ply, _, _, noLag)
 	if noLag then -- noLag is just supported by TTT2
